@@ -1,0 +1,27 @@
+.word-card {
+    margin-top: 1vh;
+}
+
+.answer-area {
+    margin: 10vw;
+}
+
+.gap {
+    margin-bottom: 10px;
+}
+
+.answer {
+    box-shadow: 5px 5px 5px gray;
+}
+
+.answer:hover {
+    background-color: gray;
+}
+
+.correct {
+    background-color: greenyellow;
+}
+
+.incorrect {
+    background-color: red;
+}
