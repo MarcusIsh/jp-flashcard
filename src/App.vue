@@ -1,7 +1,7 @@
 <template>
-  <Header @clearWord="clearWord" />
+  <!-- <Header @clearWord="clearWord" /> -->
 
-  <div class="container-flud">
+  <div class="container-fluid">
     <DisplayArea
       v-if="rerenderComponent"
       :word="word"
@@ -27,7 +27,7 @@
 
 
 <script>
-import Header from "./components/header.vue";
+// import Header from "./components/header.vue";
 import DisplayArea from "./components/display-area.vue";
 import Answers from "./components/answers.vue";
 import jpJson from "./assets/json/jpwordlist.json";
@@ -35,7 +35,7 @@ import jpJson from "./assets/json/jpwordlist.json";
 export default {
   name: "App",
   components: {
-    Header,
+    // Header,
     DisplayArea,
     Answers,
   },
@@ -55,6 +55,7 @@ export default {
     },
     clearWord() {
       this.currentWord = "";
+      this.pickNewWord();
     },
     setCurrentWord(e) {
       this.currentWord = e;
