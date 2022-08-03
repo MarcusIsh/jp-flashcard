@@ -11,7 +11,7 @@
 }
 
 .answer {
-    box-shadow: 5px 5px 5px gray;
+    box-shadow: 5px 5px 5px black;
 }
 
 .answer:hover {
@@ -24,4 +24,67 @@
 
 .incorrect {
     background-color: red;
+}
+
+body {
+    background-color: black;
+    background-image: url(../imgs/background-image.jpg);
+    background-size: cover;
+}
+
+.question-card {
+    box-shadow: 5px 5px 5px black;
+}
+
+/* Google translate disable */
+#google_translate_element{width:300px;float:right;text-align:right;display:block}
+.goog-te-banner-frame.skiptranslate { display: none !important;} 
+body { top: 0px !important; }
+#goog-gt-tt{display: none !important; top: 0px !important; } 
+.goog-tooltip skiptranslate{display: none !important; top: 0px !important; } 
+.activity-root { display: hide !important;} 
+.status-message { display: hide !important;}
+.started-activity-container { display: hide !important;}
+
+.chat-btn {
+    position: absolute;
+    left: 14px;
+    top: 30px;
+    cursor: pointer
+}
+
+.chat-btn .close {
+    display: none
+}
+
+.chat-btn i {
+    transition: all 0.9s ease
+}
+
+#check:checked~.chat-btn i {
+    display: block;
+    pointer-events: auto;
+    transform: rotate(180deg)
+}
+
+#check:checked~.chat-btn .comment {
+    display: none
+}
+
+.chat-btn i {
+    font-size: 22px;
+    color: #fff !important
+}
+
+.chat-btn {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50px;
+    background-color: blue;
+    color: #fff;
+    font-size: 22px;
+    border: none
 }

@@ -2,7 +2,7 @@
   <div class="word-card">
     <div class="row justify-content-center">
       <div class="col-3 align-self-center">
-        <div class="card">
+        <div class="card question-card">
           <div class="card-header">Word</div>
           <div class="card-body">
             <div class="row">
@@ -10,17 +10,28 @@
               <div class="col-12">
                 <div class="row">
                   <div class="col-12">
-                    {{ currentWord.Japanese }}
+                    {{
+                      $store.getters["word/getUnit"] != "Shopping" &&
+                      $store.getters["language/transLang"] == "JP"
+                        ? $store.getters["word/getJapanese"]
+                        : $store.getters["word/getEnglish"]
+                    }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div
+                    class="col-12"
+                    v-if="$store.getters['language/transLang'] == 'JP'"
+                  >
+                    {{ $store.getters["word/getRomaji"] }}
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-12">
-                    {{ currentWord.Romaji }}
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12">
-                    <button class="btn btn-lg" @click="tts(currentWord.Romaji)">
+                    <button
+                      class="btn btn-lg"
+                      @click="tts($store.getters['language/transLang'])"
+                    >
                       <svg
                         className="w-6 h-6"
                         fill="none"
@@ -52,60 +63,36 @@ import tts from "./service/tts.vue";
 export default {
   name: "DisplayArea",
   props: {
-    word: String,
+    // word: String,
     json: Array,
-    currentWord: Object,
+    // currentWord: Object,
   },
   data() {
     return {
-      //   word: this.word,
-      studyWords: [
-        {
-          id: 0,
-          kanji: "",
-          hirigana: "はい",
-          answer: "Yes",
-          pronunciation: "Hai",
-        },
-        {
-          id: 1,
-          kanji: "ほ",
-          hirigana: "本ん",
-          answer: "Book",
-          pronunciation: "Hon",
-        },
-      ],
-      //   currentWord: {},
+      word: {},
     };
   },
   methods: {
-    // pickNewWord() {
-    //   const random = Math.floor(Math.random() * this.json.length);
-    //   console.log(random);
-    //   let selectedWord = this.json[random];
-    //   this.currentWord = selectedWord;
-
-    //   this.$emit("currentWord", this.currentWord);
-    //   //   console.log(selectedWord);
-    // },
-    tts(text) {
+    //text to speech
+    tts(language) {
       var msg = new SpeechSynthesisUtterance();
-      msg.text = text;
-      msg.lang = "ja-JP";
+      console.log(language);
+      if (language == "JP") {
+        msg.text = this.$store.getters["word/getJapanese"];
+        msg.lang = "ja-JP";
+      } else {
+        msg.text = this.$store.getters["word/getEnglish"];
+        msg.lang = "en-EN";
+      }
+
       window.speechSynthesis.speak(msg);
     },
   },
-  mounted() {},
+  mounted() {
+    this.word = this.$store.getters["word/currentWord"];
+  },
   created() {
     const vm = this;
-    // setTimeout(function () {
-    // vm.pickNewWord();
-
-    // console.log(`Voices #: ${speechSynthesis.getVoices().length}`);
-    // speechSynthesis.getVoices().forEach((voice) => {
-    //   console.log(voice.name, voice.lang);
-    // });
-    // }, 1000);
   },
 };
 </script>

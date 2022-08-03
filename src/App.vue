@@ -1,14 +1,15 @@
 <template>
-  <!-- <Header @clearWord="clearWord" /> -->
+  <NavHeader @clearWord="clearWord" @rerender="forceRerender" />
 
   <div class="container-fluid">
     <DisplayArea
       v-if="rerenderComponent"
+      class="gap"
       :word="word"
       :current-word="currentWord"
       :json="json"
     />
-    SCORE: {{ score }}
+    SCORE: {{ $store.getters["score/score"] }}
     <div class="answer-area">
       <Answers
         v-if="rerenderComponent"
@@ -27,15 +28,15 @@
 
 
 <script>
-// import Header from "./components/header.vue";
+import NavHeader from "./components/navHeader.vue";
 import DisplayArea from "./components/display-area.vue";
 import Answers from "./components/answers.vue";
-import jpJson from "./assets/json/jpwordlist.json";
+import Json from "./assets/json/newJPWordList.json";
 
 export default {
   name: "App",
   components: {
-    // Header,
+    NavHeader,
     DisplayArea,
     Answers,
   },
@@ -46,7 +47,7 @@ export default {
       selectedAnswer: null,
       rerenderComponent: true,
       score: 0,
-      json: jpJson,
+      json: Json,
     };
   },
   methods: {
@@ -62,26 +63,35 @@ export default {
     },
     forceRerender() {
       this.pickNewWord();
-      setTimeout(() => {
-        this.rerenderComponent = false;
+      this.rerenderComponent = false;
 
-        this.score++;
+      this.$store.dispatch("score/raiseScore");
 
-        this.$nextTick(() => {
-          this.rerenderComponent = true;
-        });
-      }, 1000);
+      this.$nextTick(() => {
+        this.rerenderComponent = true;
+      });
     },
     pickNewWord() {
       const random = Math.floor(Math.random() * this.json.length);
-      console.log(random);
+      // console.log(random);
       let selectedWord = this.json[random];
-      this.currentWord = selectedWord;
+      // this.currentWord = selectedWord;
+      this.$store.dispatch("word/setNewWord", selectedWord);
       //   console.log(selectedWord);
     },
   },
   mounted() {
     this.pickNewWord();
+
+    //set language in vuex
+    this.$store.dispatch(
+      "language/setOriginLanguage",
+      window.localStorage.getItem("originLanguage")
+    );
+    this.$store.dispatch(
+      "language/setTransLanguage",
+      window.localStorage.getItem("transLanguage")
+    );
   },
 };
 </script>

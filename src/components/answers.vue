@@ -6,7 +6,13 @@
           class="card gap answer"
           @click="selectAnswer($event, value.English)"
         >
-          <div class="card-body">{{ value.English }}</div>
+          <div class="card-body">
+            {{
+              $store.getters["language/transLang"] == "JP"
+                ? value.English
+                : value.Japanese || value.JP.Japanese
+            }}
+          </div>
         </div>
       </div>
     </div>
@@ -17,34 +23,15 @@
 export default {
   name: "Answers",
   props: {
-    currentWord: Array,
+    currentWord: Object,
     json: Array,
   },
   data() {
     return {
-      answers: [
-        {
-          answer: "Book",
-        },
-        {
-          answer: "Yes",
-        },
-        {
-          answer: "test3",
-        },
-        {
-          answer: "test4",
-        },
-        {
-          answer: "test5",
-        },
-        {
-          answer: "test6",
-        },
-      ],
       shuffledArray: null,
       selected: [],
       answered: false,
+      wrongCount: 0,
     };
   },
   methods: {
@@ -52,21 +39,33 @@ export default {
       if (this.answered) {
         return;
       }
-      let test = word;
+
       const el = e.target;
 
-      if (word === this.currentWord.English) {
+      if (word === this.$store.getters["word/getEnglish"]) {
         this.answered = true;
         el.parentElement.classList.add("correct");
 
         var msg = new SpeechSynthesisUtterance();
-        msg.text = this.currentWord.Romaji;
-        msg.lang = "ja-JP";
+        if (window.localStorage.getItem("transLang") == "JP") {
+          msg.text = this.$store.getters["word/getJapanese"];
+          msg.lang = "ja-JP";
+        } else {
+          msg.text = this.$store.getters["word/getEnglish"];
+          msg.lang = "en-EN";
+        }
         window.speechSynthesis.speak(msg);
 
         this.$emit("rerenderComponent");
       } else {
         el.parentElement.classList.add("incorrect");
+
+        this.wrongCount += 1;
+
+        if (this.wrongCount == 3) {
+          this.wrongCount = 0;
+          this.$emit("renderComponent");
+        }
       }
     },
     shuffle(a) {
@@ -83,24 +82,39 @@ export default {
     createAnswers() {
       let vm = this;
 
+      let currentWord = [];
+      currentWord.English = this.$store.getters["word/getEnglish"];
+      currentWord.Japanese = this.$store.getters["word/getJapanese"];
+      currentWord.Romaji = this.$store.getters["word/getRomaji"];
+      currentWord.Unit = this.$store.getters["word/getUnit"];
+
+      console.log(currentWord);
+
       if (this.currentWord.Unit != "") {
         const unitType = this.json.filter(
-          (word) => word.Unit == this.currentWord.Unit
+          (word) => word.Unit == this.$store.getters["word/getUnit"]
         );
 
         let shuffledArray = this.shuffle(unitType);
 
         this.selected = shuffledArray.slice(0, 5);
 
-        if (!this.selected.some((e) => e.Romaji === this.currentWord.Romaji)) {
-          this.selected.push(vm.currentWord);
+        if (
+          !this.selected.some(
+            (e) => e.Romaji === this.$store.getters["word/getRomaji"]
+          )
+        ) {
+          this.selected.push(currentWord);
         } else {
           this.selected = shuffledArray.slice(0, 6);
         }
       } else {
         this.shuffledArray = this.shuffle(this.json);
         this.selected = this.shuffledArray.slice(0, 5);
-        this.selected.push(vm.currentWord);
+
+        console.log(currentWord);
+
+        this.selected.push(currentWord);
       }
 
       this.selected = this.shuffle(this.selected);
